@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="./js/color-modes.js"></script>
+    <link
+      rel="stylesheet"
+      href="./bootstrap-icons-1.10.5/font/bootstrap-icons.min.css"
+    />
+    <link rel="shortcut icon" href="./img/img.png" type="image/x-icon" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta
+      name="author"
+      content="Mark Otto, Jacob Thornton, and Bootstrap contributors"
+    />
+    <meta name="generator" content="Hugo 0.112.5" />
+    <title>Home page</title>
+
+    <link href="./css/bootstrap.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="./css/dark-light.css" />
+
+    <!-- Custom styles for this template -->
+    <link href="./css/sidebars.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/myStyle.css" />
+    <style>
+      /* Custom default button */
+      .btn-light,
+      .btn-light:hover,
+      .btn-light:focus {
+        color: #333;
+        text-shadow: none; /* Prevent inheritance from `body` */
+      }
+
+      /*
+ * Base structure
+ */
+
+      body {
+        text-shadow: 0 0.05rem 0.1rem rgba(0, 0, 0, 0.5);
+        box-shadow: inset 0 0 5rem rgba(0, 0, 0, 0.5);
+      }
+
+      .cover-container {
+        max-width: 42em;
+      }
+    </style>
+  </head>
+  <body class="d-flex h-100 text-center text-bg-dark">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <%- include('./header.ejs', {currentPage: "signup"}) %>
+
+      <main class="px-3">
+        <h1>Sign up</h1>
+
+        <form
+          id="formsignup"
+          class="text-start mx-auto mt-5"
+          style="max-width: 22em"
+        >
+          <div class="mb-3">
+            <label for="exampleInputUsername" class="form-label"
+              >Username :</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="exampleInputUsername"
+              name="username"
+            />
+          </div>
+
+          <div class="mb-1">
+            <label for="exampleInputEmail1" class="form-label"
+              >Email address :
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="exampleInputEmail1"
+              name="email"
+            />
+            <p style="color: red" class="erroremail" id="erroremail"></p>
+          </div>
+          <div class="mb-1">
+            <label for="exampleInputPassword1" class="form-label"
+              >Password :
+            </label>
+            <input
+              type="password"
+              class="form-control"
+              id="exampleInputPassword1"
+              name="password"
+            />
+          </div>
+          <p style="color: red" class="errorpassword" id="errorpassword"></p>
+          <div class="mb-3 form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="exampleCheck1"
+            />
+            <label class="form-check-label" for="exampleCheck1"
+              >Check me out</label
+            >
+          </div>
+          <button type="submit" class="btn btn-primary">Sign up</button>
+        </form>
+      </main>
+
+      <footer class="mt-auto text-white-50">
+        <p>Designed and developed by Houari Belsaadi © 2023</p>
+      </footer>
+    </div>
+    <script>
+      formsignup.addEventListener("submit", async (eo) => {
+        eo.preventDefault();
+        erroremail.textContent = "";
+        errorpassword.textContent = "";
+        const res = await fetch("/signup", {
+          method: "POST",
+          body: JSON.stringify({
+            username: exampleInputUsername.value,
+            email: exampleInputEmail1.value,
+            password: exampleInputPassword1.value,
+            img:"",
+            public_id:"",
+          }),
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
+        if (data.arrvalidatorError) {
+          console.log(data.arrvalidatorError.errors);
+
+          data.arrvalidatorError.errors.forEach((item) => {
+            if (item.path == "email") {
+              erroremail.textContent = item.msg;
+            }
+            if (item.path == "password") {
+              errorpassword.textContent = item.msg;
+            }
+          });
+        }
+        if (data.emailexiste) {
+          console.log(data.emailexiste);
+          erroremail.textContent = data.emailexiste;
+        }
+        if (data.id) {
+          console.log(data);
+          location.assign("/home");
+        }
+      });
+    </script>
+    <script src="./js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
